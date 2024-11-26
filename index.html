@@ -5,7 +5,6 @@
     <title>דירוג המשתתפים</title>
     <script src="https://cdn.jsdelivr.net/npm/uuid@8.3.2/dist/umd/uuid.min.js"></script>
     <style>
-        /* Similar styles to before, with some updates */
         body {
             font-family: 'Arial', sans-serif;
             background: linear-gradient(135deg, #f6d365 0%, #fda085 100%);
@@ -56,7 +55,54 @@
     </div>
 
     <script>
-        // Similar JavaScript as before
+        const congratsMessages = [
+            "כל הכבוד!",
+            "אתם אלופים!",
+            "עבודת צוות נהדרת!",
+            "מדהימים!",
+            "פשוט מרשים!"
+        ];
+
+        function getRandomCongrats() {
+            return congratsMessages[Math.floor(Math.random() * congratsMessages.length)];
+        }
+
+        function updateRankings() {
+            const rankings = JSON.parse(localStorage.getItem('rankings') || '[]');
+            const rankingsContainer = document.getElementById('rankings');
+            rankingsContainer.innerHTML = '';
+
+            rankings.forEach((entry, index) => {
+                const rankDiv = document.createElement('div');
+                rankDiv.classList.add('rank');
+                rankDiv.innerHTML = `
+                    <div>מקום ${index + 1}</div>
+                    <div>${entry.timestamp}</div>
+                    <div class="congratulations">${getRandomCongrats()}</div>
+                `;
+                rankingsContainer.appendChild(rankDiv);
+            });
+        }
+
+        function addRanking() {
+            const rankings = JSON.parse(localStorage.getItem('rankings') || '[]');
+            const newEntry = {
+                id: uuid.v4(),
+                timestamp: new Date().toLocaleString('he-IL')
+            };
+
+            // Limit to top 10
+            rankings.push(newEntry);
+            if (rankings.length > 10) {
+                rankings.shift();
+            }
+
+            localStorage.setItem('rankings', JSON.stringify(rankings));
+            updateRankings();
+        }
+
+        addRanking();
+        updateRankings();
     </script>
 </body>
 </html>
