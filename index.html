@@ -2,53 +2,89 @@
 <html lang="he" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>דירוג המשתתפים</title>
+    <title>דירוג הכניסות - גרסת ברקים</title>
     <script src="https://cdn.jsdelivr.net/npm/uuid@8.3.2/dist/umd/uuid.min.js"></script>
     <style>
-        body {
-            font-family: 'Arial', sans-serif;
-            background: linear-gradient(135deg, #f6d365 0%, #fda085 100%);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap');
+
+        body, html {
             margin: 0;
-            text-align: center;
+            padding: 0;
+            height: 100%;
+            overflow: hidden;
+            font-family: 'Orbitron', sans-serif;
         }
+
+        #background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, #0a0a2a, #1a1a4a);
+            overflow: hidden;
+            z-index: -2;
+        }
+
+        .lightning {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.1);
+            pointer-events: none;
+            animation: lightning-flash 0.5s linear infinite;
+            border-radius: 50%;
+        }
+
+        @keyframes lightning-flash {
+            0%, 100% { opacity: 0; }
+            50% { opacity: 1; }
+        }
+
         .container {
-            background-color: rgba(255, 255, 255, 0.9);
+            position: relative;
+            z-index: 10;
+            background-color: rgba(0, 0, 0, 0.7);
             border-radius: 20px;
             padding: 40px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
             max-width: 800px;
-            width: 100%;
+            width: 90%;
+            margin: 50px auto;
+            box-shadow: 0 0 50px rgba(0, 255, 255, 0.5);
+            border: 2px solid rgba(0, 255, 255, 0.3);
         }
+
         h1 {
-            color: #333;
+            color: #00ffff;
+            text-shadow: 0 0 10px rgba(0, 255, 255, 0.7);
+            font-size: 3rem;
             margin-bottom: 40px;
-            font-size: 48px;
         }
+
         .rank {
-            background-color: #4CAF50;
-            color: white;
+            background: linear-gradient(135deg, #1a1a4a, #0a0a2a);
+            color: #00ffff;
             padding: 20px;
             border-radius: 15px;
             margin-bottom: 20px;
-            transition: transform 0.3s ease;
-            font-size: 24px;
+            border: 2px solid rgba(0, 255, 255, 0.3);
+            transition: all 0.3s ease;
+            text-shadow: 0 0 5px rgba(0, 255, 255, 0.5);
         }
+
         .rank:hover {
             transform: scale(1.05);
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.7);
         }
+
         .congratulations {
-            font-weight: bold;
-            color: #2E7D32;
+            color: #00ff00;
+            text-shadow: 0 0 5px rgba(0, 255, 0, 0.5);
             margin-top: 10px;
-            font-size: 20px;
+            font-weight: bold;
         }
     </style>
 </head>
 <body>
+    <div id="background"></div>
     <div class="container">
         <h1>דירוג הכניסות</h1>
         <div id="rankings"></div>
@@ -56,12 +92,33 @@
 
     <script>
         const congratsMessages = [
-            "כל הכבוד!",
-            "אתם אלופים!",
-            "עבודת צוות נהדרת!",
-            "מדהימים!",
-            "פשוט מרשים!"
+            "כל הכבוד! 🔥",
+            "אתם אלופים! ⚡",
+            "עבודת צוות נהדרת! 💥",
+            "מדהימים! 🌟",
+            "פשוט מרשים! 🚀"
         ];
+
+        function createLightning() {
+            const background = document.getElementById('background');
+            const lightning = document.createElement('div');
+            lightning.classList.add('lightning');
+            
+            const size = Math.random() * 200 + 50;
+            lightning.style.width = `${size}px`;
+            lightning.style.height = `${size}px`;
+            
+            lightning.style.top = `${Math.random() * 100}%`;
+            lightning.style.left = `${Math.random() * 100}%`;
+            
+            background.appendChild(lightning);
+
+            setTimeout(() => {
+                background.removeChild(lightning);
+            }, 2000);
+        }
+
+        setInterval(createLightning, 500);
 
         function getRandomCongrats() {
             return congratsMessages[Math.floor(Math.random() * congratsMessages.length)];
@@ -91,7 +148,6 @@
                 timestamp: new Date().toLocaleString('he-IL')
             };
 
-            // Limit to top 10
             rankings.push(newEntry);
             if (rankings.length > 10) {
                 rankings.shift();
