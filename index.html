@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>דירוג המשתתפים</title>
+    <script src="https://cdn.jsdelivr.net/npm/uuid@8.3.2/dist/umd/uuid.min.js"></script>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #f6d365 0%, #fda085 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            text-align: center;
+        }
+        .container {
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            max-width: 600px;
+            width: 100%;
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 30px;
+        }
+        .rank {
+            background-color: #4CAF50;
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            transition: transform 0.3s ease;
+        }
+        .rank:hover {
+            transform: scale(1.05);
+        }
+        .congratulations {
+            font-weight: bold;
+            color: #2E7D32;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>דירוג הכניסות</h1>
+        <div id="rankings"></div>
+    </div>
+
+    <script>
+        const congratsMessages = [
+            "כל הכבוד!",
+            "אתם אלופים!",
+            "עבודת צוות נהדרת!",
+            "מדהימים!",
+            "פשוט מרשים!"
+        ];
+
+        function getRandomCongrats() {
+            return congratsMessages[Math.floor(Math.random() * congratsMessages.length)];
+        }
+
+        function updateRankings() {
+            const rankings = JSON.parse(localStorage.getItem('rankings') || '[]');
+            const rankingsContainer = document.getElementById('rankings');
+            rankingsContainer.innerHTML = '';
+
+            rankings.forEach((entry, index) => {
+                const rankDiv = document.createElement('div');
+                rankDiv.classList.add('rank');
+                rankDiv.innerHTML = `
+                    <div>מקום ${index + 1}</div>
+                    <div>${entry.timestamp}</div>
+                    <div class="congratulations">${getRandomCongrats()}</div>
+                `;
+                rankingsContainer.appendChild(rankDiv);
+            });
+        }
+
+        function addRanking() {
+            const rankings = JSON.parse(localStorage.getItem('rankings') || '[]');
+            const newEntry = {
+                id: uuid.v4(),
+                timestamp: new Date().toLocaleString('he-IL')
+            };
+
+            // Limit to top 10
+            rankings.push(newEntry);
+            if (rankings.length > 10) {
+                rankings.shift();
+            }
+
+            localStorage.setItem('rankings', JSON.stringify(rankings));
+            updateRankings();
+        }
+
+        // Add current visit to rankings
+        addRanking();
+        updateRankings();
+    </script>
+</body>
+</html>
